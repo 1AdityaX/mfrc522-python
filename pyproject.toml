@@ -18,5 +18,5 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/AnonymousXsn/MFRC522-python"
-"Bug Tracker" = "https://github.com/AnonymousXsn/MFRC522-python/issues"
+"Homepage" = "https://github.com/1AdityaX/mfrc522-python"
+"Bug Tracker" = "https://github.com/1AdityaX/mfrc522-python/issues"
