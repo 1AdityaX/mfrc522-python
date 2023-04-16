@@ -168,7 +168,7 @@ class MFRC522:
         register address and the value to be written.
 
         Args:
-            addr (int): the address of the register to write to, in the range 0x00-0xFF.
+            :param: (int): the address of the register to write to, in the range 0x00-0xFF.
             val (int): the value to write to the register, in the range 0x00-0xFF.
         """
         val = self.spi.xfer2([(addr << 1) & 0x7E, val])
@@ -580,7 +580,8 @@ class MFRC522:
 
     def WriteTag(self, blockAddr, writeData):
         """
-        Writes data to a specified block address in the RFID tag.
+        Writes data to a specified block address in the RFID tag.'
+
         Args:
             blockAddr (int): The block address where data needs to be written
             writeData (list): A list of 16 bytes of data to be written to the block
