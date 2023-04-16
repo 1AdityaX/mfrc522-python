@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "mfrc522-python"
 version = "0.0.2"
 authors = [
-  { name="AnonymousXsn"},
+  { name="Aditya"},
 ]
 description = "The mfrc522 library is used to interact with RFID readers that use the MFRC522 chip"
 readme = "README.md"
