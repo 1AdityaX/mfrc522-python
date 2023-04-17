@@ -144,7 +144,7 @@ class MFRC522:
             else:
                 pin_rst = 22
 
-        self.StopAuth = self.StopCrypto1()
+        self.StopAuth = self.StopCrypto1
         # Set up reset pin and initialize MFRC522 RFID reader
         GPIO.setup(pin_rst, GPIO.OUT)
         GPIO.output(pin_rst, 1)

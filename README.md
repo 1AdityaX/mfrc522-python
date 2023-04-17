@@ -34,9 +34,9 @@ def read(trailer_block, key, block_addrs):
     reader.StopAuth()
     return id, text_read
 
-trailer_block = 15
+trailer_block = 11
 key = KEY = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
-block_addrs = [12,13,14]
+block_addrs = [8,9,10]
 id, text = read(trailer_block, key, block_addrs)
 while not id:
     id, text = read(trailer_block, key, block_addrs)
