@@ -1,6 +1,6 @@
 from . import MFRC522
 
-class SimpleMFRC522:
+class BasicMFRC522:
     def __init__(self, KEY=[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]):
         self.MFRC522 = MFRC522()
         self.KEY = KEY
