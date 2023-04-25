@@ -139,6 +139,11 @@ class BasicMFRC522:
             id = self.clear_no_sector(trailer_block)
         return id
 
+    def clear_sectors(self, trailer_blocks=[]):
+        for i in trailer_blocks:
+            id = self.clear_sector(i)
+        return id
+
     def uid_to_num(self, uid):
         n = 0
         for i in range(0, 5):
