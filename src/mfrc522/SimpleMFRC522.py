@@ -6,7 +6,7 @@ class SimpleMFRC522:
         self.MFRC522 = MFRC522()
         self.KEY = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
         self.BLOCK_ADDRS = [8, 9, 10]
-
+    
     def read(self):
         id, text = self.read_no_block()
         while not id:
@@ -44,7 +44,7 @@ class SimpleMFRC522:
             text_read = ''
             if status == self.MFRC522.MI_OK:
                 for block_num in self.BLOCK_ADDRS:
-                    block = self.MFRC522.Read(block_num)
+                    block = self.MFRC522.ReadTag(block_num)
                     if block:
                         data += block
                 if data:
@@ -73,14 +73,14 @@ class SimpleMFRC522:
         status = self.MFRC522.Authenticate(
             self.MFRC522.PICC_AUTHENT1A, 11, self.KEY, uid)
         try:
-            self.MFRC522.Read(11)
+            self.MFRC522.ReadTag(11)
             if status == self.MFRC522.MI_OK:
                 data = bytearray()
                 data.extend(bytearray(text.ljust(
                     len(self.BLOCK_ADDRS) * 16).encode('ascii')))
                 i = 0
                 for block_num in self.BLOCK_ADDRS:
-                    self.MFRC522.Write(block_num, data[(i*16):(i+1)*16])
+                    self.MFRC522.WriteTag(block_num, data[(i*16):(i+1)*16])
                     i += 1
             self.MFRC522.StopCrypto1()
             return id, text[0:(len(self.BLOCK_ADDRS) * 16)]
