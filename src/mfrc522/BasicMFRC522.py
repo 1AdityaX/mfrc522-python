@@ -2,6 +2,13 @@ from . import MFRC522
 
 
 class BasicMFRC522:
+    """
+    A class for reading, writing and clearing data using the MFRC522 RFID module with extended function.
+
+    Attributes:
+        MFRC522 (module): The MFRC522 module used for communication with the RFID reader.
+        KEY (list): The default authentication key used for reading and writing data.
+    """
     def __init__(self, KEY=[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]):
         """
         Initializes a BasicMFRC522 instance.
@@ -12,7 +19,7 @@ class BasicMFRC522:
         self.MFRC522 = MFRC522()  # Create an instance of the MFRC522 class
         self.KEY = KEY  # Set the authentication key
 
-    def read_sector(self, trailer_block=11):
+    def read_sector(self, trailer_block):
         """
         Read data from a sector of the RFID tag.
 
@@ -22,14 +29,12 @@ class BasicMFRC522:
         Returns:
             tuple: A tuple containing the tag ID (as an integer) and the data read (as a string).
         """
-        id, text = self.read_no_block(
-            trailer_block, (trailer_block-3, trailer_block-2, trailer_block-1))
+        id, text = self.read_no_block(trailer_block)
         while not id:
-            id, text = self.read_no_block(
-                trailer_block, (trailer_block-3, trailer_block-2, trailer_block-1))
+            id, text = self.read_no_block(trailer_block)
         return id, text
 
-    def read_sectors(self, trailer_blocks=[11]):
+    def read_sectors(self, trailer_blocks):
         """
         Read data from multiple sectors of the RFID tag.
 
@@ -75,9 +80,9 @@ class BasicMFRC522:
             return None
 
         # Convert UID to integer and return as the tag ID
-        return self.uid_to_num(uid)
+        return self._uid_to_num(uid)
 
-    def read_no_block(self, trailer_block, block_addr):
+    def read_no_block(self, trailer_block):
         """
         Attempt to read data from the RFID tag.
 
@@ -89,7 +94,11 @@ class BasicMFRC522:
             tuple: A tuple containing the tag ID (as an integer) and the data read (as a string),
                 or (None, None) if the operation fails.
         """
-        
+        if not self._check_trailer_block(trailer_block):
+            raise ValueError("Invalid Trailer Block {trailer_block}")
+
+        block_addr = (trailer_block-3, trailer_block-2, trailer_block-1)
+
         # Send request to RFID tag
         (status, TagType) = self.MFRC522.Request(self.MFRC522.PICC_REQIDL)
         if status != self.MFRC522.MI_OK:
@@ -101,7 +110,7 @@ class BasicMFRC522:
             return None, None
 
         # Convert UID to integer and store as the tag ID
-        id = self.uid_to_num(uid)
+        id = self._uid_to_num(uid)
 
         # Select the RFID tag
         self.MFRC522.SelectTag(uid)
@@ -138,7 +147,7 @@ class BasicMFRC522:
             # Return None, None if an exception occurs
             return None, None
         
-    def write_sector(self, text, trailer_block=11):
+    def write_sector(self, text, trailer_block):
         """
         Write data to a sector of the RFID tag.
 
@@ -149,20 +158,18 @@ class BasicMFRC522:
         Returns:
             tuple: A tuple containing the tag ID (as an integer) and the data written (as a string).
         """
-        # Calculate the block addresses of the data blocks in the sector
-        block_addr = [trailer_block-3, trailer_block-2, trailer_block-1]
 
         # Write the data to the RFID tag using the helper function write_no_block
-        id, text_in = self.write_no_block(text, trailer_block, block_addr)
+        id, text_in = self.write_no_block(text, trailer_block)
 
         # Retry writing if it fails initially
         while not id:
-            id, text_in = self.write_no_block(text, trailer_block, block_addr)
+            id, text_in = self.write_no_block(text, trailer_block)
 
         # Return the tag ID and the written data
         return id, text_in
 
-    def write_sectors(self, text, trailer_blocks=[11]):
+    def write_sectors(self, text, trailer_blocks):
         """
         Write data to multiple sectors of the RFID tag.
 
@@ -174,7 +181,7 @@ class BasicMFRC522:
             tuple: A tuple containing the tag ID (as an integer) and the concatenated data written to all sectors (as a string).
         """
         # Split the input text into chunks of 48 characters
-        text_formated_list = self.split_string(text)
+        text_formated_list = self._split_string(text)
 
         # Initialize an empty string to store the concatenated data
         text_all = ''
@@ -194,7 +201,7 @@ class BasicMFRC522:
         # Return the tag ID and the concatenated data
         return id, text_all
 
-    def write_no_block(self, text, trailer_block, block_addr):
+    def write_no_block(self, text, trailer_block):
         """
         Attempt to write data to the RFID tag.
 
@@ -206,6 +213,12 @@ class BasicMFRC522:
         Returns:
             tuple: A tuple containing the tag ID (as an integer) and the data written (as a string), or (None, None) if the operation fails.
         """
+        if not self._check_trailer_block(trailer_block):
+            raise ValueError("Invalid Trailer Block {trailer_block}")
+
+        block_addr = (trailer_block-3, trailer_block-2, trailer_block-1)
+        text = str(text)
+
         # Send request to RFID tag
         (status, TagType) = self.MFRC522.Request(self.MFRC522.PICC_REQIDL)
         if status != self.MFRC522.MI_OK:
@@ -217,7 +230,7 @@ class BasicMFRC522:
             return None, None
 
         # Convert UID to integer and store as id
-        id = self.uid_to_num(uid)
+        id = self._uid_to_num(uid)
 
         # Select the RFID tag using the UID
         self.MFRC522.SelectTag(uid)
@@ -249,61 +262,6 @@ class BasicMFRC522:
             self.MFRC522.StopCrypto1()
             return None, None
 
-    def clear_no_sector(self, trailer_block):
-        """
-        Clear a sector of the RFID tag by writing zeros to all data blocks.
-
-        Args:
-            trailer_block (int): The block number of the sector trailer.
-
-        Returns:
-            int: The tag ID as an integer, or None if the operation fails.
-        """
-        # Send request to RFID tag
-        (status, TagType) = self.MFRC522.Request(self.MFRC522.PICC_REQIDL)
-        if status != self.MFRC522.MI_OK:
-            return None
-
-        # Anticollision, return UID if success
-        (status, uid) = self.MFRC522.Anticoll()
-        if status != self.MFRC522.MI_OK:
-            return None
-
-        # Convert UID to integer and store as id
-        id = self.uid_to_num(uid)
-
-        # Select the RFID tag using the UID
-        self.MFRC522.SelectTag(uid)
-
-        # Authenticate with the sector trailer block using the default key
-        status = self.MFRC522.Authenticate(self.MFRC522.PICC_AUTHENT1A, trailer_block, self.KEY, uid)
-
-        # Read the sector trailer block
-        self.MFRC522.ReadTag(trailer_block)
-
-        # Determine the block addresses of the data blocks in the sector
-        block_addr = [trailer_block-3, trailer_block-2, trailer_block-1]
-
-        try:
-            if status == self.MFRC522.MI_OK:
-                # Prepare data with all zeros
-                data = [0x00]*16
-
-                # Write zeros to each data block in the sector
-                for block_num in block_addr:
-                    self.MFRC522.WriteTag(block_num, data)
-
-            # Stop encryption
-            self.MFRC522.StopCrypto1()
-
-            # Return the tag ID
-            return id
-        except:
-            # Stop encryption and return None if an exception occurs
-            self.MFRC522.StopCrypto1()
-            return None
-
-
     def clear_sector(self, trailer_block):
         """
         Clear a sector of the RFID tag by writing zeros to all data blocks.
@@ -324,8 +282,7 @@ class BasicMFRC522:
         # Return the tag ID
         return id
 
-
-    def clear_sectors(self, trailer_blocks=[]):
+    def clear_sectors(self, trailer_blocks):
         """
         Clear multiple sectors of the RFID tag by writing zeros to all data blocks.
 
@@ -342,8 +299,71 @@ class BasicMFRC522:
         # Return the tag ID
         return id
 
+    def clear_no_sector(self, trailer_block):
+        """
+        Clear a sector of the RFID tag by writing zeros to all data blocks.
 
-    def uid_to_num(self, uid):
+        Args:
+            trailer_block (int): The block number of the sector trailer.
+
+        Returns:
+            int: The tag ID as an integer, or None if the operation fails.
+        """
+        if not self._check_trailer_block(trailer_block):
+            raise ValueError("Invalid Trailer Block {trailer_block}")
+
+        block_addr = (trailer_block-3, trailer_block-2, trailer_block-1)
+
+        # Send request to RFID tag
+        (status, TagType) = self.MFRC522.Request(self.MFRC522.PICC_REQIDL)
+        if status != self.MFRC522.MI_OK:
+            return None
+
+        # Anticollision, return UID if success
+        (status, uid) = self.MFRC522.Anticoll()
+        if status != self.MFRC522.MI_OK:
+            return None
+
+        # Convert UID to integer and store as id
+        id = self._uid_to_num(uid)
+
+        # Select the RFID tag using the UID
+        self.MFRC522.SelectTag(uid)
+
+        # Authenticate with the sector trailer block using the default key
+        status = self.MFRC522.Authenticate(self.MFRC522.PICC_AUTHENT1A, trailer_block, self.KEY, uid)
+
+        # Read the sector trailer block
+        self.MFRC522.ReadTag(trailer_block)
+
+        # Determine the block addresses of the data blocks in the sector
+
+        try:
+            if status == self.MFRC522.MI_OK:
+                # Prepare data with all zeros
+                data = [0x00]*16
+
+                # Write zeros to each data block in the sector
+                for block_num in block_addr:
+                    self.MFRC522.WriteTag(block_num, data)
+
+            # Stop encryption
+            self.MFRC522.StopCrypto1()
+
+            # Return the tag ID
+            return id
+        except:
+            # Stop encryption and return None if an exception occurs
+            self.MFRC522.StopCrypto1()
+            return None
+
+    def _check_trailer_block(self, trailer_block):
+        if (trailer_block+1)%4 == 0:
+            return True
+        else:
+            return False
+
+    def _uid_to_num(self, uid):
         """
         Convert the UID (Unique Identifier) of the RFID tag to an integer.
 
@@ -358,20 +378,19 @@ class BasicMFRC522:
             n = n * 256 + uid[i]
         return n
 
-
-    def split_string(self, s):
+    def _split_string(self, string):
         """
         Split a string into chunks of 48 characters.
 
         Args:
-            s (str): The string to split.
+            string (str): The string to split.
 
         Returns:
             list: A list of strings, each containing up to 48 characters.
         """
         l = list()
-        for i in range(0, len(s), 48):
-            l.append(s[i:i+48])
+        for i in range(0, len(string), 48):
+            l.append(string[i:i+48])
 
         # If the last chunk is less than 48 characters, pad it with null characters ('\0')
         if len(l[-1]) < 48:
