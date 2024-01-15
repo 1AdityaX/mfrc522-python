@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mfrc522-python"
-version = "0.0.5"
+version = "0.0.6"
 authors = [
   { name="Aditya"},
 ]
-description = "The mfrc522 library is used to interact with RFID readers that use the MFRC522 chip"
+description = "The mfrc522-python library is used to interact with RFID readers that use the MFRC522 chip interfaced with a Raspberry Pi."
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
