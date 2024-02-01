@@ -141,7 +141,7 @@ class MFRC522:
         # Set reset pin based on pin_mode if not specified
         if pin_rst == -1:
             if pin_mode == 11:
-                pin_rst = 15
+                pin_rst = 25
             else:
                 pin_rst = 22
 
