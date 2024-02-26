@@ -242,7 +242,7 @@ class MFRC522:
         temp = self.ReadReg(self.TxControlReg)
 
         # Check if the least significant two bits are already set
-        if (~(temp & 0x03)):
+        if (temp & 0x03) != 0x03:
             # If not, turn on the antenna by setting the bits using a bit mask
             self.SetBitMask(self.TxControlReg, 0x03)
 
@@ -310,7 +310,7 @@ class MFRC522:
             n = self.ReadReg(self.CommIrqReg)
             i -= 1
             # Break if interrupt request received or timeout
-            if ~((i != 0) and ~(n & 0x01) and ~(n & waitIRq)):
+            if i == 0 or (n & 0x01) or (n & waitIRq):
                 break
 
         # Clear bit framing if command is transceive
