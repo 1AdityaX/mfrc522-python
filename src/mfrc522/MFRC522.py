@@ -306,7 +306,7 @@ class MFRC522:
         # Wait for command execution (timeout)
         i = 2000
         while True:
-            time.sleep(0.35)
+            time.sleep(0.01)
             n = self.ReadReg(self.CommIrqReg)
             i -= 1
             # Break if interrupt request received or timeout
