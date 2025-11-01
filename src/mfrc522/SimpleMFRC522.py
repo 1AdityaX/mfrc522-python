@@ -1,5 +1,6 @@
 from . import MFRC522
 from . import BasicMFRC522
+from time import sleep
 
 
 class SimpleMFRC522:
@@ -32,6 +33,7 @@ class SimpleMFRC522:
         """
         id, text = self.BasicMFRC522.read_no_block(self.TRAILER_BLOCK)
         while not id:
+            sleep(0.2)  # Wait 200ms before retrying to reduce CPU usage
             id, text = self.BasicMFRC522.read_no_block(self.TRAILER_BLOCK)
         return id, text
 
@@ -44,6 +46,7 @@ class SimpleMFRC522:
         """
         id = self.BasicMFRC522.read_id_no_block()
         while not id:
+            sleep(0.2)  # Wait 200ms before retrying to reduce CPU usage
             id = self.BasicMFRC522.read_id_no_block()
         return id
 
@@ -60,6 +63,7 @@ class SimpleMFRC522:
 
         id, text_in = self.BasicMFRC522.write_no_block(text, self.TRAILER_BLOCK)
         while not id:
+            sleep(0.2)  # Wait 200ms before retrying to reduce CPU usage
             id, text_in = self.BasicMFRC522.write_no_block(text, self.TRAILER_BLOCK)
         return id, text_in
 

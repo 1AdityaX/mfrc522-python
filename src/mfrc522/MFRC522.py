@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 import spidev
 import logging
-import time
 
 
 class MFRC522:
@@ -306,7 +305,6 @@ class MFRC522:
         # Wait for command execution (timeout)
         i = 2000
         while True:
-            time.sleep(0.35)
             n = self.ReadReg(self.CommIrqReg)
             i -= 1
             # Break if interrupt request received or timeout
