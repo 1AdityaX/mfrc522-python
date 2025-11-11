@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import spidev
 import logging
+from time import sleep
 
 
 class MFRC522:
@@ -310,7 +311,7 @@ class MFRC522:
             # Break if interrupt request received or timeout
             if i == 0 or (n & 0x01) or (n & waitIRq):
                 break
-
+            sleep(0.001)
         # Clear bit framing if command is transceive
         self.ClearBitMask(self.BitFramingReg, 0x80)
 
@@ -450,6 +451,7 @@ class MFRC522:
             i -= 1
             if not ((i != 0) and not (n & 0x04)):
                 break
+            sleep(0.001)
 
         # Read the calculated CRC value from the chip.
         pOutData = []
