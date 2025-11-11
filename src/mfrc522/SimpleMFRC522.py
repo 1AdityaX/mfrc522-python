@@ -19,7 +19,6 @@ class SimpleMFRC522:
         Initializes a SimpleMFRC522 instance.
         """
         
-        self.MFRC522 = MFRC522()
         self.KEY = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
         self.TRAILER_BLOCK = 11
         self.BasicMFRC522 = BasicMFRC522()
