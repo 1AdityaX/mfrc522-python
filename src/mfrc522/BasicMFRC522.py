@@ -19,6 +19,12 @@ class BasicMFRC522:
         self.MFRC522 = MFRC522()  # Create an instance of the MFRC522 class
         self.KEY = KEY  # Set the authentication key
 
+    def Close(self):
+        """ 
+        Close the MFRC522 instance to free up resources.
+        """
+        self.MFRC522.Close()
+        
     def read_sector(self, trailer_block):
         """
         Read data from a sector of the RFID tag.
