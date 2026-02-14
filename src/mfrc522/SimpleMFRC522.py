@@ -27,7 +27,7 @@ class SimpleMFRC522:
         """ 
         Close the MFRC522 instance to free up resources.
         """
-        self.BasicMFRC522.Close()
+        self.BasicMFRC522.close()
     
     def read(self):
         """
