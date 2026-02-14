@@ -306,12 +306,12 @@ class MFRC522:
         # Wait for command execution (timeout)
         i = 2000
         while True:
-            time.sleep(0.35)
             n = self.ReadReg(self.CommIrqReg)
             i -= 1
             # Break if interrupt request received or timeout
             if i == 0 or (n & 0x01) or (n & waitIRq):
                 break
+            time.sleep(0.001)
 
         # Clear bit framing if command is transceive
         self.ClearBitMask(self.BitFramingReg, 0x80)
