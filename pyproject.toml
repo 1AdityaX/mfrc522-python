@@ -4,17 +4,24 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mfrc522-python"
-version = "0.0.7"
+version = "0.0.8"
 authors = [
   { name="Aditya"},
 ]
 description = "The mfrc522-python library is used to interact with RFID readers that use the MFRC522 chip interfaced with a Raspberry Pi."
 readme = "README.md"
 requires-python = ">=3.7"
+keywords = ["rfid", "mfrc522", "raspberry-pi", "nfc", "mifare", "spi"]
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: POSIX :: Linux",
+]
+dependencies = [
+    "RPi.GPIO",
+    "spidev",
 ]
 
 [project.urls]

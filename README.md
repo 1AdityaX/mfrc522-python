@@ -15,6 +15,7 @@
 	- [Using `mfrc522.SimpleMFRC522`](#using-simplemfrc522-class-1)
 	- [Using `mfrc522.BasicMFRC522`](#using-basicmfrc522-class-1)
 - [Contributions](#contributions)
+- [Credits](#credits)
 - [License](#license)
 
 ## Introduction
@@ -476,6 +477,11 @@ Contributions to the `mfrc522-python` library are welcome. To contribute, follow
 That's it! By submitting a pull request, you can contribute your changes to the `mfrc522-python` library.
  Provide a clear description of your changes in the pull request.
 If you have any questions or need further assistance, feel free to open an issue.
+
+## Credits
+This library was inspired by and builds upon the work of:
+- [pimylifeup/MFRC522-python](https://github.com/pimylifeup/MFRC522-python)
+- [mxgxw/MFRC522-python](https://github.com/mxgxw/MFRC522-python)
 
 ## License
 This project is licensed under the GNU General Public License (GPL) version 3.0. You can find the full text of the license in the [LICENSE](LICENSE) file.
