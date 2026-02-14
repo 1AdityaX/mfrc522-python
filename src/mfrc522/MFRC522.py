@@ -312,6 +312,7 @@ class MFRC522:
             if i == 0 or (n & 0x01) or (n & waitIRq):
                 break
             sleep(0.001)
+
         # Clear bit framing if command is transceive
         self.ClearBitMask(self.BitFramingReg, 0x80)
 
