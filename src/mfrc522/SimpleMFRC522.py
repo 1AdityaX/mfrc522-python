@@ -21,7 +21,7 @@ class SimpleMFRC522:
         self.KEY = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
         self.TRAILER_BLOCK = 11
         self.BasicMFRC522 = BasicMFRC522()
-        self.MFRC522 = self.BasicMFRC522.MFRC522()
+        self.MFRC522 = self.BasicMFRC522.MFRC522
         
     def close(self):
         """ 
