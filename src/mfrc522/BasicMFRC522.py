@@ -1,5 +1,5 @@
 from . import MFRC522
-
+from time import sleep
 
 class BasicMFRC522:
     """
@@ -19,6 +19,12 @@ class BasicMFRC522:
         self.MFRC522 = MFRC522()  # Create an instance of the MFRC522 class
         self.KEY = KEY  # Set the authentication key
 
+    def close(self):
+        """ 
+        Close the MFRC522 instance to free up resources.
+        """
+        self.MFRC522.Close()
+        
     def read_sector(self, trailer_block):
         """
         Read data from a sector of the RFID tag.
@@ -31,6 +37,7 @@ class BasicMFRC522:
         """
         id, text = self.read_no_block(trailer_block)
         while not id:
+            sleep(0.2)  # Wait 200ms before retrying to reduce CPU usage
             id, text = self.read_no_block(trailer_block)
         return id, text
 
@@ -59,6 +66,7 @@ class BasicMFRC522:
         """
         id = self.read_id_no_block()
         while not id:
+            sleep(0.2)  # Wait 200ms before retrying to reduce CPU usage
             id = self.read_id_no_block()
         return id
 
@@ -164,6 +172,7 @@ class BasicMFRC522:
 
         # Retry writing if it fails initially
         while not id:
+            sleep(0.2)  # Wait 200ms before retrying to reduce CPU usage
             id, text_in = self.write_no_block(text, trailer_block)
 
         # Return the tag ID and the written data
@@ -277,6 +286,7 @@ class BasicMFRC522:
 
         # Retry clearing the sector until it succeeds and returns a tag ID
         while not id:
+            sleep(0.2)  # Wait 200ms before retrying to reduce CPU usage
             id = self.clear_no_sector(trailer_block)
 
         # Return the tag ID

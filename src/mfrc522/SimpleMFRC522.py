@@ -1,5 +1,5 @@
-from . import MFRC522
 from . import BasicMFRC522
+from time import sleep
 
 
 class SimpleMFRC522:
@@ -18,10 +18,16 @@ class SimpleMFRC522:
         Initializes a SimpleMFRC522 instance.
         """
         
-        self.MFRC522 = MFRC522()
         self.KEY = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
         self.TRAILER_BLOCK = 11
         self.BasicMFRC522 = BasicMFRC522()
+        self.MFRC522 = self.BasicMFRC522.MFRC522
+        
+    def close(self):
+        """ 
+        Close the MFRC522 instance to free up resources.
+        """
+        self.BasicMFRC522.close()
     
     def read(self):
         """
@@ -32,6 +38,7 @@ class SimpleMFRC522:
         """
         id, text = self.BasicMFRC522.read_no_block(self.TRAILER_BLOCK)
         while not id:
+            sleep(0.2)  # Wait 200ms before retrying to reduce CPU usage
             id, text = self.BasicMFRC522.read_no_block(self.TRAILER_BLOCK)
         return id, text
 
@@ -44,6 +51,7 @@ class SimpleMFRC522:
         """
         id = self.BasicMFRC522.read_id_no_block()
         while not id:
+            sleep(0.2)  # Wait 200ms before retrying to reduce CPU usage
             id = self.BasicMFRC522.read_id_no_block()
         return id
 
@@ -60,6 +68,7 @@ class SimpleMFRC522:
 
         id, text_in = self.BasicMFRC522.write_no_block(text, self.TRAILER_BLOCK)
         while not id:
+            sleep(0.2)  # Wait 200ms before retrying to reduce CPU usage
             id, text_in = self.BasicMFRC522.write_no_block(text, self.TRAILER_BLOCK)
         return id, text_in
 
